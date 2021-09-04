@@ -57,6 +57,11 @@ module ethernet_rx (
 
     /* verilator lint_on UNUSED */
     
+    //used for ip packet handling
+    wire [3:0] ip_version;
+    wire [3:0] ip4_header_length;
+
+
     always @(posedge i_clkQ) begin
         bits <= {bits[0], i_ethernet}; //shift bits lower
     end
@@ -103,11 +108,7 @@ module ethernet_rx (
                 end
             end
             PAYLOAD: begin
-                case(ethertype_brev)
-                    16'h0080: begin //if we're receiving IP payload
-                    end
-                    default: assert(0);
-                endcase
+                //payload is storted and forwarded to the controller 
             end
             default: assert(0);
         endcase

@@ -1,0 +1,5 @@
+implement protocols
+    ARP
+    UDP -> Some commands sent via UDP handled in a separate module, 
+
+implement data transmission, so that can send some sort of ACK when a packet is received, or send some queried data
