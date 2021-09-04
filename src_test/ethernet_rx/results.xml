@@ -1,6 +1,0 @@
-<testsuites name="results">
-  <testsuite name="all" package="all">
-    <property name="random_seed" value="1628883454" />
-    <testcase name="test_ethernet_rx" classname="ethernet_rx" file="/home/kamei/projects/01_ethernet/src_test/ethernet_rx/ethernet_rx.py" lineno="7" time="0.02458810806274414" sim_time_ns="288.001" ratio_time="11713.019938950838" />
-  </testsuite>
-</testsuites>
