@@ -16,9 +16,19 @@
     */
 module ethernet_controller
     (
-        input wire clk
+        input wire clk,
+        input wire reset,
+        
+        //ethernet RX MII
+        input wire [3:0] rxd,
+        input wire rx_clk,
+        input wire rx_dv
+
     );
 
     
+
+    
+
 
 endmodule

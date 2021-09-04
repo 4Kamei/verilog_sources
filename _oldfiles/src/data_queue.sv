@@ -7,45 +7,51 @@
 
 module data_queue
     #(
-        parameter DATA_WIDTH,
-        parameter QUEUE_DEPTH,
-        parameter QUEUE_MAX_ELEMENTS
+        parameter DATA_WIDTH = 8,
+        parameter QUEUE_DEPTH = 12'd4095,
+        parameter QUEUE_MAX_ELEMENTS = 5'd31,
+        parameter MAX_ELEMENT_LENGTH = 11'd2047
     )
     (
         input wire read_clk,
         input wire read_en,
-        output wire [ELEMENT_WIDTH-1:0] o_data,
+        output wire [DATA_WIDTH-1:0] o_data,
         output wire has_data,
+        output wire queue_empty,
 
         input wire write_clk,
         input wire write_en,
-        input wire [ELEMENT_WIDTH-1:0] i_data,
+        input wire [DATA_WIDTH-1:0] i_data,
         output wire queue_full,
 
-        input wire reset;
+        input wire i_reset 
     );
 
 
+    localparam LEN_STOR_W= $clog2(MAX_ELEMENT_LENGTH);
 
-    localparam LENGTH_STORAGE_WIDTH = $clog2(MAX_ELEMENT_LENGTH)
 
-
-    reg [LENGTH_STORAGE_WIDTH-1:0] write_data_length;
+    reg [LEN_STOR_W-1:0] write_data_length;
     reg write_length_strobe;
 
-    reg [LENGTH_STORAGE_WIDTH-1:0] read_data_length;
     
+    wire [LEN_STOR_W-1:0] read_data_length;
+    reg [LEN_STOR_W-1:0] read_data_length_reg;
+
+    reg read_length_strobe;
+
     wire length_queue_full;
 
     dual_port_fifo #(
-        .DATA_WIDTH(LENGTH_STORAGE_WIDTH),
+        .DATA_WIDTH(LEN_STOR_W),
         .FIFO_DEPTH(QUEUE_MAX_ELEMENTS))
         length_queue_fifo_inst (
         .reset(reset),
         //read signals
         .rd_clk(read_clk),
-        .rd_en(1'b0),
-        .rd_data(),
+        .rd_en(read_length_strobe),
+        .rd_data(read_data_length),
+        //unused, as should be synchronised to the data fifo
         .empty(),
         //write signals
         .wr_clk(write_clk),
@@ -55,6 +61,8 @@ module data_queue
         
     wire data_queue_full;
 
+    reg read_data_enable;
+
     dual_port_fifo #(
         .DATA_WIDTH(DATA_WIDTH),
         .FIFO_DEPTH(QUEUE_DEPTH))
@@ -62,9 +70,9 @@ module data_queue
         .reset(reset),
         //read signals
         .rd_clk(read_clk),
-        .rd_en(1'b0),
+        .rd_en(read_data_enable),
         .rd_data(o_data),
-        .empty(),
+        .empty(queue_empty),
         //write signals
         .wr_clk(write_clk),
         .wr_en(write_en),
@@ -80,7 +88,7 @@ module data_queue
         write_length_strobe <= 0;
         if(write_en) begin
             if(writing_state) begin
-                write_data_length <= write_data_length + 1;
+                write_data_length <= write_data_length + 1'b1;
             end else begin
                 write_data_length <= 0;
                 writing_state <= 1;
@@ -94,7 +102,21 @@ module data_queue
     end
 
     always @(posedge read_clk) begin
-        //TODO reading logic 
+        read_length_strobe <= 0;
+        read_data_enable <= 0;
+        if(read_en) begin
+            if(reading_state) begin
+                read_data_enable <= 1;
+                read_data_length_reg <= read_data_length_reg - 1'b1;
+            end else begin
+                read_data_length_reg <= read_data_length;
+                read_length_strobe <= 1;
+            end 
+        end else begin
+            if(reading_state & read_data_length_reg == 0) begin
+                reading_state <= 0;
+            end
+        end
     end
 
 

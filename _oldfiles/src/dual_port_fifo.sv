@@ -19,13 +19,6 @@ module dual_port_fifo
         input wire reset
     );
 
-    `ifdef COCOTB_SIM
-    initial begin
-        $dumpfile("dual_port_fifo.vcd");
-        $dumpvars(0, dual_port_fifo);
-    end
-    `endif
-
     localparam POINTER_WIDTH = $clog2(FIFO_DEPTH);
 
     logic [DATA_WIDTH - 1: 0] fifo_data [FIFO_DEPTH - 1: 0];

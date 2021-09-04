@@ -15,7 +15,7 @@ module ethernet_rx
         output reg [47:0] dst_mac,
         output reg [47:0] src_mac,
         output reg [15:0] ethertype,
-        
+
     );
     
     `define fill(ARRAY) \ 
@@ -43,12 +43,13 @@ module ethernet_rx
     end
     `endif
 
+
     typedef enum logic [2:0] {IDLE, PREAMBLE, DST_MAC, SRC_MAC, ETHERTYPE, PAYLOAD, DONE} state_t;
 
     state_t state;
 
 
-    //
+    //TODO IMPLEMENT CRC CHECKING 
     
     reg [$clog2(MAX_PAYLOAD_BYTES):0] byte_counter;
     
