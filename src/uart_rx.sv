@@ -22,7 +22,7 @@
 
 
 module uart_rx
-   #(   parameter clock_multiple = 3'd4    ) //need to be very careful with this, as not having 3' means DELAY_WIDTH is 32 suddenly, which increases the sizes of all reginsters for no reason
+   #(   parameter CLOCK_MULTIPLE = 3'd4    ) //need to be very careful with this, as not having 3' means DELAY_WIDTH is 32 suddenly, which increases the sizes of all reginsters for no reason
     (
         input wire uart_clk,
         input wire reset,
@@ -33,7 +33,7 @@ module uart_rx
         output reg data_ready  
     );
     
-    localparam DELAY_WIDTH = $clog2(clock_multiple) + 1'b1;
+    localparam DELAY_WIDTH = $clog2(CLOCK_MULTIPLE) + 1'b1;
 
     reg receiving_state = 0;
     reg returned_high = 1;
@@ -59,7 +59,7 @@ module uart_rx
             if(receiving_state) begin
                 if(clock_delay == 0) begin
                     data[byte_counter] <= uart_in;                    
-                    clock_delay <= clock_multiple - 1;
+                    clock_delay <= CLOCK_MULTIPLE - 1;
                     byte_counter <= byte_counter + 1'b1;
                     if(byte_counter == 3'b111) begin
                         receiving_state <= 1'b0;
@@ -78,7 +78,7 @@ module uart_rx
                         data_ready <= 0;
                         //there is a chance that the edges of our clock fall close to the bit edges
                         //so we wait one extra clock to stop any skew
-                        clock_delay <= clock_multiple; 
+                        clock_delay <= CLOCK_MULTIPLE; 
                         byte_counter <= 3'b000;
                     end
                 end else begin

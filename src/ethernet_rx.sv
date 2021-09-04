@@ -58,8 +58,6 @@ module ethernet_rx (
     /* verilator lint_on UNUSED */
     
     //used for ip packet handling
-    wire [3:0] ip_version;
-    wire [3:0] ip4_header_length;
 
 
     always @(posedge i_clkQ) begin
