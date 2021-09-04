@@ -11,7 +11,7 @@ module bin2gray
     );
 
     always_comb begin 
-        gray <= binary >> 1 ^ binary;
+        gray = binary >> 1 ^ binary;
     end
 
 endmodule 

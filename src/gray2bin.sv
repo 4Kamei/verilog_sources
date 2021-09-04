@@ -14,7 +14,7 @@ module gray2bin
 
     always_comb begin
         for(i = 0; i < BINARY_WIDTH; i++) begin
-            binary[i] <= ^(gray >> i);
+            binary[i] = ^(gray >> i);
         end
     end
 
