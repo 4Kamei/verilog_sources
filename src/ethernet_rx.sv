@@ -12,10 +12,10 @@ module ethernet_rx
         input wire reset,
 
         output wire has_packet,
-        output wire [47:0] dst_mac,
-        output wire [47:0] src_mac,
-        output wire [47:0] ethertype,
-
+        output reg [47:0] dst_mac,
+        output reg [47:0] src_mac,
+        output reg [15:0] ethertype,
+        
     );
     
     `define fill(ARRAY) \ 
@@ -49,14 +49,10 @@ module ethernet_rx
 
 
     //
+    
     reg [$clog2(MAX_PAYLOAD_BYTES):0] byte_counter;
     
     reg upper_half;
-    
-    reg [MAX_PAYLOAD_BYTES * 8 - 1:0] payload;
-    reg [47:0] src_mac;
-    reg [47:0] dst_mac;
-    reg [15:0] ethtype;
 
     always @(posedge rx_clk) begin
         if(reset) begin

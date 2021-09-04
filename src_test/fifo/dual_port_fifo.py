@@ -56,7 +56,6 @@ async def test(dut):
 
     dut.reset <= 0
     
-    
 
     #push until full
     while(True):
