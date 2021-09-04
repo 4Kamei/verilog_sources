@@ -58,8 +58,27 @@ int main(int argc, char** argv, char** env) {
         tick(top, tfp);
 
         if(m_time > 1000 && not_sent) {
+            
             not_sent = false;
+
             send_byte(0x55, top, tfp);
+            tick(top, tfp);
+            tick(top, tfp);
+            tick(top, tfp);
+            tick(top, tfp);
+            
+            send_byte(0xff, top, tfp);
+            tick(top, tfp);
+            tick(top, tfp);
+            tick(top, tfp);
+            tick(top, tfp);
+            
+            send_byte('a', top, tfp);
+            tick(top, tfp);
+            tick(top, tfp);
+            tick(top, tfp);
+            tick(top, tfp);
+            
         }
     }
     
