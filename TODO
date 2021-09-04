@@ -1,3 +1,8 @@
+clean up testbenches 
+
+write testbenh for the ethernet_rx_phy for manchester decoding to MII 
+
+
 implement protocols
     ARP
     UDP -> Some commands sent via UDP handled in a separate module, 
