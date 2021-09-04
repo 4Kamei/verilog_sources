@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1628448373" />
+    <testcase name="test_uart_transmit" classname="uart_rx_test" file="/home/kamei/projects/01_ethernet/src_test/uart_rx_cb/uart_rx_test.py" lineno="20" time="0.004932880401611328" sim_time_ns="450.001" ratio_time="91224.79431145481" />
+  </testsuite>
+</testsuites>
