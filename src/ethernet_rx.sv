@@ -17,7 +17,7 @@ module ethernet_rx (
         input wire i_ethernet
     );
 
-    typedef enum {IDLE, SYNC, REC_HEADER, REC_HEADER_DONE, REC_PAYLOAD} ethernet_state /*verilator public*/;
+    typedef enum [1:0] {IDLE, SYNC, REC_HEADER, REC_PAYLOAD} ethernet_state /*verilator public*/;
 
     typedef enum {IP, UNK} ethernet_type /*verilator public*/;
 
