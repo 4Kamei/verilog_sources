@@ -27,7 +27,7 @@ module uart_rx
         input wire uart_clk,
         input wire reset,
 
-        input wire uart_rx,
+        input wire uart_in,
         
         output reg[7:0] data,
         output reg data_ready  
@@ -35,7 +35,8 @@ module uart_rx
     
     localparam DELAY_WIDTH = $clog2(clock_multiple);
     localparam HALF_CLOCK = $rtoi(clock_multiple / 2);
-    
+
+
     reg receiving_state = 1'b0;
     reg returned_high = 1'b1;
     reg [2:0] byte_counter = 3'b0;
@@ -63,12 +64,12 @@ module uart_rx
             if(receiving_state) begin
                 if(clock_delay == 0) begin
                     curr_bit = byte_counter;
-                    data[curr_bit] <= uart_rx;                    
+                    data[curr_bit] <= uart_in;                    
                     clock_delay <= clock_multiple - 1;
                     {finishing_state, byte_counter} <= byte_counter + 1'b1;
                     if(byte_counter == 3'b111) begin
                         receiving_state <= 1'b0;
-                        returned_high <= uart_rx;
+                        returned_high <= uart_in;
                         data_ready <= 1'b1;
                     end
                 end else begin
@@ -78,7 +79,7 @@ module uart_rx
             //set receiving state, so we're receiving bits
             //delay by one clock cycle
                 if(returned_high) begin
-                    if(uart_rx == 0) begin
+                    if(uart_in == 0) begin
                         receiving_state <= 1'b1;
                         data_ready <= 0;
                         //there is a chance that the edges of our clock fall close to the bit edges
@@ -87,7 +88,7 @@ module uart_rx
                         byte_counter <= 3'b000;
                     end
                 end else begin
-                    if(uart_rx) begin
+                    if(uart_in) begin
                         returned_high <= 1'b1;
                     end
                 end
