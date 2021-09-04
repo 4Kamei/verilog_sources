@@ -1,20 +1,14 @@
+SIM = icarus
+TOPLEVEL_LANG = verilog
 
-ifneq ($(words $(CURDIR)),1)
- $(error Unsupported: GNU Make cannot build in directories containing spaces, build elsewhere: '$(CURDIR)')
-endif
+VERILOG_SOURCES = ../../src/ethernet_rx.sv
 
-ifeq ($(VERILATOR_ROOT),)
-VERILATOR = verilator
-else
-export VERILATOR_ROOT
-VERILATOR = $(VERILATOR_ROOT)/bin/verilator
-endif
+TOPLEVEL = ethernet_rx
 
-default:
-	$(VERILATOR) -Wall --trace --cc --exe --build *.cpp ../../src/ethernet_rx.sv --top-module ethernet_rx
-	mv obj_dir/Vethernet_rx Vethernet_rx
+MODULE = ethernet_rx
 
-clean:
-	rm ethernet_rx.vcd
-	rm Vethernet_rx
-	rm -rf obj_dir
+include $(shell cocotb-config --makefiles)/Makefile.sim
+
+
+
+
