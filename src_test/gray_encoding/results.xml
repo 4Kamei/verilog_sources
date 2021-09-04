@@ -1,6 +1,0 @@
-<testsuites name="results">
-  <testsuite name="all" package="all">
-    <property name="random_seed" value="1628963250" />
-    <testcase name="test" classname="gray_tb" file="/home/kamei/projects/01_ethernet/src_test/gray_encoding/gray_tb.py" lineno="18" time="0.05794835090637207" sim_time_ns="1024.001" ratio_time="17670.925642983217" />
-  </testsuite>
-</testsuites>
