@@ -19,8 +19,6 @@ module ethernet_rx (
 
     typedef enum [2:0] {IDLE, SYNC, REC_DSTMAC, REC_SRCMAC, REC_ETHERTYPE, PAYLOAD} ethernet_state /*verilator public*/;
 
-    typedef enum [1:0] {IP, UNK} ethernet_type /*verilator public*/;
-
     reg [1:0] bits;
     reg has_edge;
 
@@ -33,12 +31,13 @@ module ethernet_rx (
 
     /* verilator lint_off UNUSED */
     
-    reg [15:0] ethertype_brev;
-    
-    ethernet_type ethertype;
+    reg [15:0] ethertype_brev; 
 
     wire [47:0] dst_mac;
     wire [47:0] src_mac;
+
+    wire has_edge;
+    assign has_edge = bits[0] ^ bits[1];
 
     //reverse the order of the bytes for both destination and source mac
 
@@ -65,9 +64,7 @@ module ethernet_rx (
     //triggering on negedge as that's the next edge of the clocks i_clkQ and
     //i_clk. 
     always @(negedge i_clk) begin
-        /* verilator lint_off BLKSEQ */
-        has_edge = bits[0] ^ bits[1];
-        /* verilator lint_on BLKSEQ */
+
         if(state != IDLE & state != SYNC) begin
             bitCounter <= bitCounter + 1; //increment bit counter whenever a new bit comes in, 
         end
@@ -102,7 +99,15 @@ module ethernet_rx (
                 ethertype_brev[bitCounter[3:0]] <= bits[0];
                 if(bitCounter == 16'd15) begin
                     state <= PAYLOAD;
+                    bitCounter <= 0;
                 end
+            end
+            PAYLOAD: begin
+                case(ethertype_brev)
+                    16'h0080: begin //if we're receiving IP payload
+                    end
+                    default: assert(0);
+                endcase
             end
             default: assert(0);
         endcase
