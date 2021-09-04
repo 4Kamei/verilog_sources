@@ -22,7 +22,7 @@
 
 
 module uart_rx
-   #(   parameter clock_multiple = 4    )
+   #(   parameter clock_multiple = 3'd4    ) //need to be very careful with this, as not having 3' means DELAY_WIDTH is 32 suddenly, which increases the sizes of all reginsters for no reason
     (
         input wire uart_clk,
         input wire reset,
@@ -33,13 +33,11 @@ module uart_rx
         output reg data_ready  
     );
     
-    localparam DELAY_WIDTH = $clog2(clock_multiple);
-    localparam HALF_CLOCK = $rtoi(clock_multiple / 2);
+    localparam DELAY_WIDTH = $clog2(clock_multiple) + 1'b1;
 
-
-    reg receiving_state = 1'b0;
-    reg returned_high = 1'b1;
-    reg [2:0] byte_counter = 3'b0;
+    reg receiving_state = 0;
+    reg returned_high = 1;
+    reg [2:0] byte_counter = 0;
     reg [DELAY_WIDTH - 1: 0] clock_delay = 0;
     
     //assume the clock is a multiple of the transmit frequency (4x)
@@ -49,11 +47,8 @@ module uart_rx
 
     //TODO write TB for this 
 
-    reg [2:0] curr_bit; 
-    reg finishing_state;
-
     always @(posedge uart_clk) begin
-        if(reset | data_ready) begin     
+        if(reset) begin     
             receiving_state <= 1'b0;
             byte_counter <= 3'b0;
             clock_delay <= 0;
@@ -63,10 +58,9 @@ module uart_rx
         //if we are receiving
             if(receiving_state) begin
                 if(clock_delay == 0) begin
-                    curr_bit = byte_counter;
-                    data[curr_bit] <= uart_in;                    
+                    data[byte_counter] <= uart_in;                    
                     clock_delay <= clock_multiple - 1;
-                    {finishing_state, byte_counter} <= byte_counter + 1'b1;
+                    byte_counter <= byte_counter + 1'b1;
                     if(byte_counter == 3'b111) begin
                         receiving_state <= 1'b0;
                         returned_high <= uart_in;
